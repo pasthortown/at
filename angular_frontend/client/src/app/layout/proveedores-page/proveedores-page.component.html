@@ -1,0 +1,143 @@
+<div class="row p-2">
+  <h1 class="col-12 text-right">
+    Lista de Proveedores Externos
+  </h1>
+</div>
+
+<div class="row p-2">
+  <div class="col-12 mb-3">
+    <div class="btn-toolbar" role="toolbar">
+      <div class="btn-group mr-2" role="group">
+        <button type="button" class="btn btn-primary" (click)="nuevo(); open_modal(modalContent);">
+          <i class="fas fa-plus-circle"></i>
+        </button>
+      </div>
+      <div class="input-group mr-2">
+        <button class="input-group-text btn btn-light" id="basic-addon1" (click)="search_data()">
+          <i class="fas fa-search"></i>
+        </button>
+        <input type="text" [(ngModel)]="filter" class="form-control" placeholder="Buscar..." (keyup)="search_data()">
+      </div>
+    </div>
+  </div>
+  <div class="col-12" style="overflow-x: auto;">
+    <table class="table table-hover" style="min-width: 800px;">
+      <thead>
+        <tr>
+          <th>
+          </th>
+          <th>
+            <small><strong>Categoría</strong></small>
+          </th>
+          <th>
+            <small><strong>Nombre Comercial</strong></small>
+          </th>
+          <th>
+            <small><strong>RUC</strong></small>
+          </th>
+          <th>
+            <small><strong>Descripción</strong></small>
+          </th>
+          <th>
+            <small><strong>Teléfono</strong></small>
+          </th>
+          <th>
+            <small><strong>Correo Electrónico</strong></small>
+          </th>
+          <th>
+            <small><strong>Opciones</strong></small>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let proveedor of items_filtered" (click)="select_item(item)">
+          <td class="text-right"><small><strong><span *ngIf="item_selected == proveedor" class="far fa-hand-point-right"></span></strong></small></td>
+          <td>
+            {{proveedor.categoria}}
+          </td>
+          <td>
+            {{proveedor.nombre}}
+          </td>
+          <td>
+            {{proveedor.RUC}}
+          </td>
+          <td>
+            {{proveedor.descripcion}}
+          </td>
+          <td>
+            {{proveedor.contacto_phone}}
+          </td>
+          <td>
+            {{proveedor.contacto_mail}}
+          </td>
+
+          <td>
+            <div class="btn-group mr-2" role="group">
+              <button type="button" class="btn btn-warning" [disabled]="!item_is_selected" (click)="open_modal(modalContent)>
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="btn btn-danger" [disabled]="!item_is_selected" (click)="delete()">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-12 mt-2 mb-2">
+    <div class="d-flex justify-content-between p-2">
+      <ngb-pagination
+        [boundaryLinks]="true"
+        [collectionSize]="collectionSize"
+        [(page)]="page"
+        [pageSize]="pageSize"
+        (pageChange)="refreshTable()">
+        <ng-template ngbPaginationFirst>Primera</ng-template>
+        <ng-template ngbPaginationLast>Última</ng-template>
+        <ng-template ngbPaginationPrevious>Anterior</ng-template>
+        <ng-template ngbPaginationNext>Siguiente</ng-template>
+        <ng-template ngbPaginationPages let-page let-pages="pages">
+          <li class="ngb-custom-pages-item" *ngIf="pages.length > 0">
+            <div class="form-group d-flex flex-nowrap px-2">
+              <label id="paginationInputLabel" for="paginationInput" class="col-form-label mr-2 ml-1">
+                Página
+              </label>
+              <div class="input-group mb-3">
+                <input #i
+                  type="number"
+                  class="form-control"
+                  id="paginationInput"
+                  [value]="page"
+                  (keyup.enter)="selectPage(i.value)"
+                  (blur)="selectPage(i.value)"
+                />
+                <button type="button" class="btn btn-primary" (click)="selectPage(i.value)">
+                  ir
+                </button>
+              </div>
+              <span id="paginationDescription" class="col-form-label text-nowrap px-2">
+                de {{pages.length}}
+              </span>
+            </div>
+          </li>
+        </ng-template>
+      </ngb-pagination>
+      <select class="custom-select" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="refreshTable()">
+        <option value="5">5 elementos por página</option>
+        <option value="10">10 elementos por página</option>
+        <option value="20">20 elementos por página</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalContent let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Proveedor</h4>
+    <button type="button" class="close" (click)="modal.dismiss('Close')">
+      <span>&times;</span>
+    </button>
+  </div>
+  <app-modal (modal_event)="process_modal_event($event)" [item_income]="item_selected"></app-modal>
+</ng-template>

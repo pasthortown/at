@@ -1,0 +1,203 @@
+<div class="row p-2">
+  <div class="col-12 mb-3">
+    <div class="btn-toolbar" role="toolbar">
+      <div class="btn-group mr-2" role="group">
+        <button type="button" class="btn btn-primary" (click)="refresh()">
+          <i class="fas fa-sync"></i>
+        </button>
+        <button type="button" class="btn btn-success" (click)="download_catastro()">
+          <i class="fas fa-download"></i>
+        </button>
+        <button type="button" class="ml-2 btn btn-warning" (click)="edit_register(register_data_modal)" [disabled]="!is_registro_selected">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button type="button" class="btn btn-dark" (click)="new_register(register_data_modal)">
+          <i class="fas fa-file"></i>
+        </button>
+      </div>
+      <div class="input-group mr-2">
+        <button class="input-group-text btn btn-light" id="basic-addon1" (click)="search_data()">
+          <i class="fas fa-search"></i>
+        </button>
+        <input type="text" [(ngModel)]="filter" class="form-control" placeholder="Buscar..." (keyup)="search_data()">
+      </div>
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">
+          Filtros
+        </span>
+        <select class="form-control form-select" id="filtro_select" name="filtro_select" #filtro_select (change)="change_filtro_select(filtro_select.value)">
+          <option *ngFor="let filter_item of filtros" [value]="filter_item.filter">{{filter_item.nombre}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="col-12" style="overflow-x: auto;">
+    <table class="table table-hover" style="min-width: 800px;">
+      <thead>
+        <tr>
+          <th>
+            <small><strong>Seleccionado</strong></small>
+          </th>
+          <th>
+            <small><strong>Nombre Comercial</strong></small>
+          </th>
+          <th>
+            <small><strong>Número de Registro</strong></small>
+          </th>
+          <th>
+            <small><strong>Actividad</strong></small>
+          </th>
+          <th>
+            <small><strong>Clasificación</strong></small>
+          </th>
+          <th>
+            <small><strong>Categoría</strong></small>
+          </th>
+          <th>
+            <small><strong>Provincia</strong></small>
+          </th>
+          <th>
+            <small><strong>Cantón</strong></small>
+          </th>
+          <th>
+            <small><strong>Parroquia</strong></small>
+          </th>
+          <th>
+            <small><strong>Dirección</strong></small>
+          </th>
+          <th>
+            <small><strong>Teléfono Principal</strong></small>
+          </th>
+          <th>
+            <small><strong>Correo Electrónico</strong></small>
+          </th>
+          <th>
+            <small><strong>Dirección Web</strong></small>
+          </th>
+          <th *ngIf="!is_externo">
+            <small><strong>Total de Habitaciones</strong></small>
+          </th>
+          <th *ngIf="!is_externo">
+            <small><strong>Total de Camas/Mesas</strong></small>
+          </th>
+          <th *ngIf="!is_externo">
+            <small><strong>Total de Plazas</strong></small>
+          </th>
+          <th *ngIf="!is_externo">
+            <small><strong>Total de Mesas de Servicios Complementarios</strong></small>
+          </th>
+          <th *ngIf="!is_externo">
+            <small><strong>Total de Sillas de Servicios Complementarios</strong></small>
+          </th>
+          <th *ngIf="!is_externo">
+            <small><strong>Total de Trabajadores</strong></small>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let registro of datos_slice" (click)="select_registro(registro)">
+          <td class="text-right"><small><strong><span *ngIf="registro_selected == registro" class="far fa-hand-point-right"></span></strong></small></td>
+          <td>
+            {{registro.nombre_comercial}}
+          </td>
+          <td>
+            {{registro.numero_registro}}
+          </td>
+          <td>
+            {{registro.actividad}}
+          </td>
+          <td>
+            {{registro.clasificacion}}
+          </td>
+          <td>
+            {{registro.categoria}}
+          </td>
+          <td>
+            {{registro.provincia}}
+          </td>
+          <td>
+            {{registro.canton}}
+          </td>
+          <td>
+            {{registro.parroquia}}
+          </td>
+          <td>
+            {{registro.direccion}}
+          </td>
+          <td>
+            {{registro.telefono_principal}}
+          </td>
+          <td>
+            {{registro.email}}
+          </td>
+          <td>
+            {{registro.url_web}}
+          </td>
+          <td *ngIf="!is_externo">
+            {{registro.habitaciones}}
+          </td>
+          <td *ngIf="!is_externo">
+            {{registro.camas}}
+          </td>
+          <td *ngIf="!is_externo">
+            {{registro.plazas}}
+          </td>
+          <td *ngIf="!is_externo">
+            {{registro.mesas_servicios_complementarios}}
+          </td>
+          <td *ngIf="!is_externo">
+            {{registro.sillas_servicios_complementarios}}
+          </td>
+          <td *ngIf="!is_externo">
+            {{registro.trabajadores}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-12 mt-2 mb-2">
+    <div class="d-flex justify-content-between p-2">
+      <ngb-pagination
+        [boundaryLinks]="true"
+        [collectionSize]="collectionSize"
+        [(page)]="page"
+        [pageSize]="pageSize"
+        (pageChange)="refreshTable()">
+        <ng-template ngbPaginationFirst>Primera</ng-template>
+        <ng-template ngbPaginationLast>Última</ng-template>
+        <ng-template ngbPaginationPrevious>Anterior</ng-template>
+        <ng-template ngbPaginationNext>Siguiente</ng-template>
+        <ng-template ngbPaginationPages let-page let-pages="pages">
+          <li class="ngb-custom-pages-item" *ngIf="pages.length > 0">
+            <div class="form-group d-flex flex-nowrap px-2">
+              <label id="paginationInputLabel" for="paginationInput" class="col-form-label mr-2 ml-1">
+                Página
+              </label>
+              <div class="input-group mb-3">
+                <input #i
+                  type="number"
+                  class="form-control"
+                  id="paginationInput"
+                  [value]="page"
+                  (keyup.enter)="selectPage(i.value)"
+                  (blur)="selectPage(i.value)"
+                />
+                <button type="button" class="btn btn-primary" (click)="selectPage(i.value)">
+                  ir
+                </button>
+              </div>
+              <span id="paginationDescription" class="col-form-label text-nowrap px-2">
+                de {{pages.length}}
+              </span>
+            </div>
+          </li>
+        </ng-template>
+      </ngb-pagination>
+      <select class="custom-select" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="refreshTable()">
+        <option value="5">5 elementos por página</option>
+        <option value="10">10 elementos por página</option>
+        <option value="20">20 elementos por página</option>
+      </select>
+    </div>
+  </div>
+</div>
