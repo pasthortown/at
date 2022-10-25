@@ -1,0 +1,31 @@
+<div class="modal-body">
+  <div class="row">
+    <div class="col-12" *ngFor = "let key of get_keys(item_definition)">
+      <label for="categoria_input" class="form-label">{{translation(key)}}</label>
+      <input *ngIf="item_definition[key] != 'file' && item_definition[key] != 'picture'"
+      [type]="item_definition[key]" class="form-control" id="categoria_input"  >
+      <input *ngIf="item_definition[toShow.key] != 'file' &&
+                   item_definition[toShow.key] != 'picture' &&
+                   item_definition[toShow.key] != 'email' &&
+                   item_definition[toShow.key] != 'geo'
+                 " type="text" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
+      <input *ngIf="item_definition[toShow.key] == 'email'" type="email" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
+
+      <span  *ngIf="item_definition[toShow.key] == 'geo'">
+        <a href="https://www.google.com/maps/@{{toShow.value.spliy(';')[0]}},{{toShow.value.spliy(';')[1]}},15z" target="blank">
+          <i class="fal fa-map-marker-check"></i>
+        </a>
+      </span>
+      <span *ngIf="item_definition[toShow.key] == 'file'">ARCHIVO</span>
+      <span *ngIf="item_definition[toShow.key] == 'picture'">IMAGEN</span>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-success" (click)="onReturn('Guardar')">
+    <i class="fas fa-save"></i>Guardar
+  </button>
+  <button type="button" class="btn btn-outline-danger" (click)="onReturn('Cancelar')">
+    <i class="fas fa-trash"></i>Cancelar
+  </button>
+</div>
