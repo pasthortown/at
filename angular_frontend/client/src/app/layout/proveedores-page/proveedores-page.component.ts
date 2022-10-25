@@ -1,7 +1,6 @@
-import { Swal } from 'sweetalert2';
+import Swal from 'sweetalert2';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CatalogDMZService } from 'src/app/services/catalog-dmz.service';
 import { CatalogService } from 'src/app/services/catalog.service';
 
 @Component({
@@ -17,6 +16,7 @@ export class ProveedoresPageComponent implements OnInit {
   filter: string = '';
   items: any[] = [];
   items_filtered: any[] = [];
+  items_filtered_slice_shown: any[] = [];
 
   item_selected: any = null;
   item_is_selected: boolean = false;
@@ -27,10 +27,15 @@ export class ProveedoresPageComponent implements OnInit {
 
   modal_reference: any;
 
-  constructor(private modalService: NgbModal, private service_CatalogDMZ: CatalogDMZService, private service_Catalog: CatalogService) { }
+  constructor(private modalService: NgbModal, private service_Catalog: CatalogService) { }
 
   ngOnInit(): void {
+    this.refresh();
+  }
+
+  refresh() {
     this.nuevo();
+    this.get_items();
   }
 
   nuevo() {
@@ -46,21 +51,68 @@ export class ProveedoresPageComponent implements OnInit {
     this.item_is_selected = false;
   }
 
-  search_data() {}
-
-  delete() {
-    this.service_Catalog.delete_item(this.item_selected.item_id, this.db, this.folder).then( r => {
-      Swal.fire(
-        'Eliminación de Proveedor!',
-        'Proveedor eliminado satisfactoriamente',
-        'success'
-      ).then( (result: any) => {
-        this.refreshTable()
-      });
-    }).catch( e => { console.log(e); });
+  search_data() {
+    this.items_filtered = this.search();
+    this.collectionSize = this.items_filtered.length;
+    this.build_table_slice();
   }
 
-  refreshTable() {
+  build_table_slice() {
+    let initial_slice: number = (this.page - 1) * Number.parseInt(this.pageSize);
+    let end_slice: number = initial_slice + Number.parseInt(this.pageSize);
+    this.items_filtered_slice_shown = this.items_filtered.slice(initial_slice, end_slice);
+  }
+
+  search(): any[] {
+    return this.items.filter((item: any) => {
+      const term: string = this.filter.toLowerCase();
+      let toReturn = false;
+      Object.values(item).forEach( (value: any) => {
+        if (value.toString().toLowerCase().includes(term)) {
+          toReturn = true;
+        }
+      });
+      return toReturn;
+    });
+  }
+
+  delete() {
+    Swal.fire({
+      title: 'Confirmación',
+      html: '¿Está seguro que desea eliminar el registro seleccionado?',
+      icon: 'warning',
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+    })
+    .then((result: any) => {
+      if (result.value) {
+        this.service_Catalog.delete_item(this.item_selected.item_id, this.db, this.folder).then( r => {
+          Swal.fire(
+            'Eliminación de registro!',
+            'Registro eliminado satisfactoriamente',
+            'success'
+          ).then( (result: any) => {
+            this.get_items();
+          });
+        }).catch( e => {
+          console.log(e);
+          Swal.fire(
+            'Eliminación de registro!',
+            'Error al eliminar el registro',
+            'error'
+          ).then( (result: any) => {
+            this.get_items();
+          });
+        });
+      }
+    });
+  }
+
+  get_items() {
     let output_model = {
       item_id: 1,
       categoria: 1,
@@ -71,7 +123,7 @@ export class ProveedoresPageComponent implements OnInit {
       contacto_mail: 1
     };
     this.service_Catalog.get_items(this.db, this.folder, output_model).then( r => {
-      this.items = r;
+      this.items = r as any[];
       this.search_data();
     }).catch( e => { console.log(e); });
   }
@@ -89,7 +141,67 @@ export class ProveedoresPageComponent implements OnInit {
     this.modal_reference = this.modalService.open(content, {centered: true, size: 'lg', backdrop: 'static', keyboard: false});
   }
 
+  cancelar_modal() {
+    Swal.fire({
+      title: 'Confirmación',
+      html: 'Al cerrar esta ventana, los cambios no se guardarán.',
+      icon: 'warning',
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+    })
+    .then((result: any) => {
+      if (result.value) {
+        this.modal_reference.close();
+      }
+    });
+  }
+
   process_modal_event(event: any) {
-    this.modal_reference.close();
+    if (event.button_text == 'Cancelar') {
+      this.cancelar_modal();
+    }
+    if (event.button_text == 'Guardar') {
+      Swal.fire({
+        title: 'Confirmación',
+        html: '¿Está seguro que desea almacenar los cambios realizados en el registro seleccionado?',
+        icon: 'warning',
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+      })
+      .then((result: any) => {
+        if (result.value) {
+          let item_to_save = event.data;
+          if (item_to_save.item_id == '') {
+            this.service_Catalog.upload_items([item_to_save], this.db, this.folder).then( r => {
+              Swal.fire(
+                'Almacenamiento de datos',
+                'Registro almacenado satisfactoriamente',
+                'success'
+              ).then( (result: any) => {
+                this.get_items();
+              });
+            }).catch( e => { console.log(e); });
+          } else {
+            this.service_Catalog.update_item(item_to_save.item_id, item_to_save, this.db, this.folder).then( r => {
+              Swal.fire(
+                'Actualización de datos',
+                'Registro actualizado satisfactoriamente',
+                'success'
+              ).then( (result: any) => {
+                this.get_items();
+              });
+            }).catch( e => { console.log(e); });
+          }
+        }
+      });
+    }
   }
 }
