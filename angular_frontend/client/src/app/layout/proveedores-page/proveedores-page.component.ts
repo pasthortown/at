@@ -15,13 +15,13 @@ export class ProveedoresPageComponent implements OnInit {
   folder: string = 'proveedores';
 
   proveedor_definition = {
-    item_id: '',
-    categoria: '',
-    nombre: '',
-    RUC: '',
-    descripcion: '',
-    contacto_phone: '',
-    contacto_mail: ''
+    item_id: 'text',
+    categoria: 'text',
+    nombre: 'text',
+    RUC: 'text',
+    descripcion: 'text',
+    contacto_phone: 'phone',
+    contacto_mail: 'email'
   };
 
   translations = {
