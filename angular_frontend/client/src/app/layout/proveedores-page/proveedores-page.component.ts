@@ -1,3 +1,4 @@
+import { NgxSpinnerService } from 'ngx-spinner';
 import Swal from 'sweetalert2';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -27,7 +28,7 @@ export class ProveedoresPageComponent implements OnInit {
 
   modal_reference: any;
 
-  constructor(private modalService: NgbModal, private service_Catalog: CatalogService) { }
+  constructor(private spinner: NgxSpinnerService,private modalService: NgbModal, private service_Catalog: CatalogService) { }
 
   ngOnInit(): void {
     this.refresh();
@@ -90,7 +91,9 @@ export class ProveedoresPageComponent implements OnInit {
     })
     .then((result: any) => {
       if (result.value) {
+        this.spinner.show();
         this.service_Catalog.delete_item(this.item_selected.item_id, this.db, this.folder).then( r => {
+          this.spinner.hide();
           Swal.fire(
             'Eliminación de registro!',
             'Registro eliminado satisfactoriamente',
@@ -99,6 +102,7 @@ export class ProveedoresPageComponent implements OnInit {
             this.get_items();
           });
         }).catch( e => {
+          this.spinner.hide();
           console.log(e);
           Swal.fire(
             'Eliminación de registro!',
@@ -122,7 +126,9 @@ export class ProveedoresPageComponent implements OnInit {
       contacto_phone: 1,
       contacto_mail: 1
     };
+    this.spinner.show();
     this.service_Catalog.get_items(this.db, this.folder, output_model).then( r => {
+      this.spinner.hide();
       this.items = r as any[];
       this.search_data();
     }).catch( e => { console.log(e); });
@@ -180,22 +186,28 @@ export class ProveedoresPageComponent implements OnInit {
         if (result.value) {
           let item_to_save = event.data;
           if (item_to_save.item_id == '') {
+            this.spinner.show();
             this.service_Catalog.upload_items([item_to_save], this.db, this.folder).then( r => {
+              this.spinner.hide();
               Swal.fire(
                 'Almacenamiento de datos',
                 'Registro almacenado satisfactoriamente',
                 'success'
               ).then( (result: any) => {
+                this.modal_reference.close();
                 this.get_items();
               });
             }).catch( e => { console.log(e); });
           } else {
+            this.spinner.show();
             this.service_Catalog.update_item(item_to_save.item_id, item_to_save, this.db, this.folder).then( r => {
+              this.spinner.hide();
               Swal.fire(
                 'Actualización de datos',
                 'Registro actualizado satisfactoriamente',
                 'success'
               ).then( (result: any) => {
+                this.modal_reference.close();
                 this.get_items();
               });
             }).catch( e => { console.log(e); });

@@ -50,7 +50,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let proveedor of items_filtered_slice_shown" (click)="select_item(item)">
+        <tr *ngFor="let proveedor of items_filtered_slice_shown" (click)="select_item(proveedor)">
           <td class="text-right"><small><strong><span *ngIf="item_selected == proveedor" class="far fa-hand-point-right"></span></strong></small></td>
           <td>
             {{proveedor.categoria}}
@@ -73,7 +73,7 @@
 
           <td>
             <div class="btn-group mr-2" role="group">
-              <button type="button" class="btn btn-warning" [disabled]="!item_is_selected" (click)="open_modal(modalContent)>
+              <button type="button" class="btn btn-warning" [disabled]="!item_is_selected" (click)="open_modal(modalContent)">
                 <i class="fas fa-edit"></i>
               </button>
               <button type="button" class="btn btn-danger" [disabled]="!item_is_selected" (click)="delete()">
@@ -92,7 +92,7 @@
         [collectionSize]="collectionSize"
         [(page)]="page"
         [pageSize]="pageSize"
-        (pageChange)="refreshTable()">
+        (pageChange)="build_table_slice()">
         <ng-template ngbPaginationFirst>Primera</ng-template>
         <ng-template ngbPaginationLast>Última</ng-template>
         <ng-template ngbPaginationPrevious>Anterior</ng-template>

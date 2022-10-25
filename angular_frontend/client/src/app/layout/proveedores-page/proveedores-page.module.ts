@@ -1,4 +1,3 @@
-import { CatalogDMZService } from 'src/app/services/catalog-dmz.service';
 import { CatalogService } from 'src/app/services/catalog.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,11 +16,11 @@ import { ModalComponent } from './components/modal/modal.component';
   imports: [
     CommonModule,
     ProveedoresPageRoutingModule,
-    CatalogService,
-    CatalogDMZService,
     FormsModule,
     NgbModule
   ],
-  providers: []
+  providers: [
+    CatalogService
+  ]
 })
 export class ProveedoresPageModule { }
