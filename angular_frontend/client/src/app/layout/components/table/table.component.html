@@ -35,21 +35,20 @@
                        item_definition[toShow.key] != 'picture' &&
                        item_definition[toShow.key] != 'email' &&
                        item_definition[toShow.key] != 'phone' &&
-                       item_definition[toShow.key] != 'geo'
+                       item_definition[toShow.key] != 'geo' &&
+                       item_definition[toShow.key] != 'money' &&
+                       item_definition[toShow.key] != 'date'
                       ">{{toShow.value}}</span>
-          <span *ngIf="item_definition[toShow.key] == 'geo'">
-            <a href="https://www.google.com/maps/@{{toShow.value.spliy(';')[0]}},{{toShow.value.spliy(';')[1]}},15z" target="blank">
-              <i class="fal fa-map-marker-check"></i>
-            </a>
-          </span>
-          <span *ngIf="item_definition[toShow.key] == 'email'">
-            <a href="mailto:{{toShow.value}}">{{toShow.value}}</a>
-          </span>
-          <span *ngIf="item_definition[toShow.key] == 'phone'">
-            <a href="tel:{{toShow.value}}">{{toShow.value}}</a>
-          </span>
-          <span *ngIf="item_definition[toShow.key] == 'file'">ARCHIVO</span>
-          <span *ngIf="item_definition[toShow.key] == 'picture'">IMAGEN</span>
+          <span *ngIf="item_definition[toShow.key] == 'date'">{{toShow.value | date: 'y-MM-dd'}}</span>
+          <span *ngIf="item_definition[toShow.key] == 'money'">USD {{toShow.value}}</span>
+          <a *ngIf="item_definition[toShow.key] == 'geo'" class="btn btn-secondary" [href]="'https://www.google.com/maps/@' + json_to_object(toShow.value).latitude + ',' + json_to_object(toShow.value).longitude + ',15z'" target="blank">
+            <i class="fas fa-map-signs"></i>
+          </a>
+          <a *ngIf="item_definition[toShow.key] == 'email'" href="mailto:{{toShow.value}}">{{toShow.value}}</a>
+          <a *ngIf="item_definition[toShow.key] == 'phone'" href="tel:{{toShow.value}}">{{toShow.value}}</a>
+          <button *ngIf="item_definition[toShow.key] == 'file' || item_definition[toShow.key] == 'picture'" type="button" class="btn btn-secondary" (click)="download_file(toShow.value)">
+            <i class="fas fa-download"></i>&nbsp;<i *ngIf="item_definition[toShow.key] == 'file'" class="far fa-file"></i><i *ngIf="item_definition[toShow.key] == 'picture'" class="fas fa-file-image"></i>
+          </button>
         </td>
         <td>
           <div class="btn-group mr-2" role="group">
@@ -112,7 +111,7 @@
 </div>
 <ng-template #modalContent let-modal>
   <div class="modal-header">
-    <h4 class="modal-title">Proveedor</h4>
+    <h4 class="modal-title">{{folder.toUpperCase()}}</h4>
     <button type="button" class="close" (click)="cancelar_modal()">
       <span>&times;</span>
     </button>

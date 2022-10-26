@@ -1,3 +1,4 @@
+import { TableModule } from './../components/table/table.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -16,8 +17,8 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     PolizaSegurosPageRoutingModule,
     FormsModule,
-    NgbModule
-  ],
-  providers: []
+    NgbModule,
+    TableModule
+  ]
 })
 export class PolizaSegurosPageModule { }

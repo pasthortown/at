@@ -1,3 +1,4 @@
+import { TableModule } from './../components/table/table.module';
 import { DateTimePickerModule } from './../../flota-elements/date-time-picker/date-time-picker.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,8 +18,8 @@ import { FormsModule } from '@angular/forms';
     OperadoresPageRoutingModule,
     FormsModule,
     DateTimePickerModule,
-    NgbModule
-  ],
-  providers: []
+    NgbModule,
+    TableModule
+  ]
 })
 export class OperadoresPageModule { }

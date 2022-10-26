@@ -3,6 +3,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import Swal from 'sweetalert2';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CatalogService } from 'src/app/services/catalog.service';
+import { FileSaverService } from 'ngx-filesaver';
 
 @Component({
   selector: 'app-table',
@@ -27,7 +28,7 @@ export class TableComponent implements OnInit {
   pageSize: any = 5;
   modal_reference: any;
 
-  constructor(private spinner: NgxSpinnerService,private modalService: NgbModal, private service_Catalog: CatalogService) { }
+  constructor(private fileServerService: FileSaverService, private spinner: NgxSpinnerService,private modalService: NgbModal, private service_Catalog: CatalogService) { }
 
   ngOnInit(): void {
   }
@@ -74,6 +75,35 @@ export class TableComponent implements OnInit {
     return toReturn;
   }
 
+  json_to_object(json: string): any {
+    return JSON.parse(json);
+  }
+
+  download_file(item_id: string) {
+    let output_model = {
+      file_base64: 1,
+      name: 1,
+      type: 1
+    };
+    this.spinner.show();
+    this.service_Catalog.get_items('files', this.folder, output_model, {item_id: item_id}).then( r => {
+      this.spinner.hide();
+      let item: any = r[0];
+      this.download(item);
+    }).catch( e => { console.log(e); });
+  }
+
+  download(item: any) {
+    const byteCharacters = atob(item.file_base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+       byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: item.type});
+    this.fileServerService.save(blob, item.name);
+  }
+
   get_values(item: any): any[] {
     let toReturn: any[] = [];
     try {
@@ -103,8 +133,8 @@ export class TableComponent implements OnInit {
   }
 
   start_item_selected() {
-    this.item_is_selected = this.compare_with_definition('');
-    this.item_selected = JSON.parse(JSON.stringify(this.item_definition));
+    this.item_is_selected = false;
+    this.item_selected = this.compare_with_definition('');
   }
 
   search_data() {

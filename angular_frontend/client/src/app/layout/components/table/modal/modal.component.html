@@ -1,23 +1,57 @@
 <div class="modal-body">
   <div class="row">
     <div class="col-12" *ngFor = "let key of get_keys(item_definition)">
-      <label for="categoria_input" class="form-label">{{translation(key)}}</label>
-      <input *ngIf="item_definition[key] != 'file' && item_definition[key] != 'picture'"
-      [type]="item_definition[key]" class="form-control" id="categoria_input"  >
-      <input *ngIf="item_definition[toShow.key] != 'file' &&
-                   item_definition[toShow.key] != 'picture' &&
-                   item_definition[toShow.key] != 'email' &&
-                   item_definition[toShow.key] != 'geo'
+      <label class="form-label">{{translation(key)}}</label>
+      <input *ngIf="item_definition[key] != 'file' &&
+                   item_definition[key] != 'picture' &&
+                   item_definition[key] != 'email' &&
+                   item_definition[key] != 'number' &&
+                   item_definition[key] != 'money' &&
+                   item_definition[key] != 'geo' &&
+                   item_definition[key] != 'date'
                  " type="text" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
-      <input *ngIf="item_definition[toShow.key] == 'email'" type="email" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
 
-      <span  *ngIf="item_definition[toShow.key] == 'geo'">
-        <a href="https://www.google.com/maps/@{{toShow.value.spliy(';')[0]}},{{toShow.value.spliy(';')[1]}},15z" target="blank">
-          <i class="fal fa-map-marker-check"></i>
-        </a>
-      </span>
-      <span *ngIf="item_definition[toShow.key] == 'file'">ARCHIVO</span>
-      <span *ngIf="item_definition[toShow.key] == 'picture'">IMAGEN</span>
+      <input *ngIf="item_definition[key] == 'email'" type="email" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
+      <input *ngIf="item_definition[key] == 'number'" type="number" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
+      <input *ngIf="item_definition[key] == 'money'" type="number"  step="0.01" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
+      <input *ngIf="item_definition[key] == 'date'" type="date" class="form-control" [placeholder]="translation(key)" [(ngModel)]="item[key]">
+
+      <agm-map *ngIf="item_definition[key] == 'geo'" class="col-12" style="height: 400px;"
+        [gestureHandling]="'cooperative'"
+        [scrollwheel]="true"
+        [zoomControl]="true"
+        [latitude]="json_to_object(item[key]).latitude * 1"
+        [longitude]="json_to_object(item[key]).longitude * 1"
+        [zoom]="15"
+        (mapClick)="setLocationEvent($event, key)">
+        <agm-marker
+          [latitude]="json_to_object(item[key]).latitude * 1"
+          [longitude]="json_to_object(item[key]).longitude * 1"
+          (dragEnd)="setLocationEvent($event, key)"
+          [animation]="'DROP'">
+        </agm-marker>
+      </agm-map>
+
+      <div *ngIf="item_definition[key] == 'file'" class="col-12">
+        <app-upload-files
+          [max_file_size]="max_file_size"
+          [max_file_count]="1"
+          [files]="[item[key]]"
+          [folder]="folder"
+          (files_uploaded)="files_uploaded($event, key)"
+        ></app-upload-files>
+      </div>
+
+      <div *ngIf="item_definition[key] == 'picture'" class="col-12">
+        <app-upload-files
+          [max_file_size]="max_file_size"
+          [max_file_count]="1"
+          [accept]="'image/*'"
+          [files]="[item[key]]"
+          [folder]="folder"
+          (files_uploaded)="files_uploaded($event, key)"
+        ></app-upload-files>
+      </div>
     </div>
   </div>
 </div>

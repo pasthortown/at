@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-modal',
@@ -10,7 +11,8 @@ export class ModalComponent implements OnInit {
   @Input('item_income') item_income: any = null;
   @Input('item_definition') item_definition: any = null;
   @Input('translations') translations: any = null;
-
+  @Input('folder') folder: string = '';
+  max_file_size: number = environment.max_file_size;
   item: any =  {item_id: ''};
 
   constructor() { }
@@ -79,5 +81,20 @@ export class ModalComponent implements OnInit {
       data: this.item
     };
     this.modal_event.emit(toReturn);
+  }
+
+  setLocationEvent(event: any, key: string) {
+    this.item[key] = JSON.stringify({ latitude: event.coords.lat, longitude: event.coords.lng });
+  }
+
+  json_to_object(json: string): any {
+    return JSON.parse(json);
+  }
+
+  files_uploaded(event: any, key: string) {
+    if (event.validated) {
+      let file = event.files[0];
+      console.log(file);
+    }
   }
 }

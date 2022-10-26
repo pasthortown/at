@@ -1,8 +1,4 @@
-import { NgxSpinnerService } from 'ngx-spinner';
-import Swal from 'sweetalert2';
 import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CatalogService } from 'src/app/services/catalog.service';
 
 @Component({
   selector: 'app-proveedores-page',

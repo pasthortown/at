@@ -1,5 +1,4 @@
 import { TableModule } from './../components/table/table.module';
-import { CatalogService } from 'src/app/services/catalog.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -18,9 +17,6 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
     NgbModule,
     TableModule
-  ],
-  providers: [
-    CatalogService
   ]
 })
 export class ProveedoresPageModule { }

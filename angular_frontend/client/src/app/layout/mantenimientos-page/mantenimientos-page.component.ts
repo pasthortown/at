@@ -7,45 +7,36 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MantenimientosPageComponent implements OnInit {
 
-  filter: string = '';
-  mantenimientos: any[] = [
-    {
-      estado: 'dummyState',
-      nombre: 'dummyName',
-      vehiculo: 'dummyVehiculoName',
-      placa: 'dummyPlaca',
-      descripcion: 'dummyAnotación',
-      fecha_aplicacion: 'dummyFecha',
-      costo: 'dummyPrecio'
-    },
-  ];
-  mantenimiento_selected: any = null;
 
-  collectionSize: number = 0;
-  page: number = 1;
-  pageSize: any = 5;
+  db: string = 'flota';
+  folder: string = 'mantenimientos';
+
+  mantenimiento_definition = {
+    item_id: 'text',
+    status: 'text',
+    nombre: 'text',
+    vehicle: 'text',
+    plate: 'text',
+    service_provided: 'text',
+    date: 'date',
+    price: 'money',
+    document: 'file'
+  };
+
+  translations = {
+    status: 'Estado',
+    nombre: 'Nombre',
+    vehicle: 'Vehículo Afectado',
+    plate: 'Placa',
+    service_provided: 'Servicio Provisto',
+    date: 'Fecha',
+    price: 'Costo',
+    document: 'Documento Adjunto'
+  }
 
   constructor() { }
 
   ngOnInit(): void {
   }
-
-  agregar() {}
-
-  search_data(){}
-
-  select_mantenimiento(data:string){}
-
-  editar(){}
-
-  eliminar(){}
-
-  refreshTable(){}
-
-  selectPage(page: string) {
-    this.page = parseInt(page)
-  }
-
-
 
 }

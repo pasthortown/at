@@ -7,40 +7,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CatalogoServiciosPageComponent implements OnInit {
 
-  filter: string = '';
-  servicios: any[] = [
-    {
-      nombre: 'dummyName',
-      proveedor: 'dummySupplier',
-      descripion: 'dummyDescription',
-      costo: 'dummyPrize',
-    },
-  ];
-  servicio_selected: any = null;
+  db: string = 'flota';
+  folder: string = 'servicios';
 
-  collectionSize: number = 0;
-  page: number = 1;
-  pageSize: any = 5;
+  service_definition = {
+    item_id: 'text',
+    nombre: 'text',
+    provider: 'text',
+    description: 'text',
+    price: 'money',
+    document: 'file'
+  };
+
+  translations = {
+    nombre: 'Nombre',
+    provider: 'Proveedor',
+    description: 'Descripción',
+    price: 'Costo',
+    document: 'Documento Adjunto'
+  }
 
   constructor() { }
 
   ngOnInit(): void {
   }
-
-  agregar() {}
-
-  search_data(){}
-
-  select_servicio(data:string){}
-
-  editar(){}
-
-  eliminar(){}
-
-  refreshTable(){}
-
-  selectPage(page: string) {
-    this.page = parseInt(page)
-  }
-
 }
